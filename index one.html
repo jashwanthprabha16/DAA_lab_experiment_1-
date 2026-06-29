@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interpolation Search</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 500px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 20px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 17px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.result {
+    margin-top: 20px;
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 5px;
+    line-height: 1.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Interpolation Search</h2>
+
+<label>Enter Sorted Array (space separated)</label>
+<input type="text" id="array" placeholder="2 5 10 15 23 35 48 60">
+
+<label>Enter Target Element</label>
+<input type="number" id="target">
+
+<button onclick="searchElement()">Search</button>
+
+<div class="result" id="result">
+Enter the values and click Search.
+</div>
+
+</div>
+
+<script>
+
+function interpolationSearch(arr, target) {
+
+    let low = 0;
+    let high = arr.length - 1;
+    let comparisons = 0;
+
+    while (low <= high && target >= arr[low] && target <= arr[high]) {
+
+        comparisons++;
+
+        if (low === high) {
+            if (arr[low] === target)
+                return {index: low, comparisons: comparisons};
+
+            return {index: -1, comparisons: comparisons};
+        }
+
+        if (arr[high] === arr[low]) {
+            if (arr[low] === target)
+                return {index: low, comparisons: comparisons};
+
+            return {index: -1, comparisons: comparisons};
+        }
+
+        let pos = low + Math.floor(
+            ((target - arr[low]) * (high - low)) /
+            (arr[high] - arr[low])
+        );
+
+        if (arr[pos] === target)
+            return {index: pos, comparisons: comparisons};
+
+        if (arr[pos] < target)
+            low = pos + 1;
+        else
+            high = pos - 1;
+    }
+
+    return {index: -1, comparisons: comparisons};
+}
+
+function searchElement() {
+
+    let arr = document.getElementById("array").value
+        .trim()
+        .split(/\s+/)
+        .map(Number);
+
+    let target = Number(document.getElementById("target").value);
+
+    if (arr.length === 0 || isNaN(target)) {
+        alert("Please enter valid input.");
+        return;
+    }
+
+    let start = performance.now();
+    let result = interpolationSearch(arr, target);
+    let end = performance.now();
+
+    let output = "";
+
+    if (result.index !== -1) {
+        output += "<b>Element Found!</b><br><br>";
+        output += "Index : " + result.index + "<br>";
+    } else {
+        output += "<b>Element Not Found!</b><br><br>";
+    }
+
+    output += "Comparisons : " + result.comparisons + "<br>";
+    output += "Execution Time : " + (end - start).toFixed(6) + " ms";
+
+    document.getElementById("result").innerHTML = output;
+}
+
+</script>
+
+</body>
+</html>
